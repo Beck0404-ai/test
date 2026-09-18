@@ -1089,9 +1089,12 @@
     }
 
     // TELEGRAM BOT INTEGRATION LOGIC
+    const DEFAULT_TG_BOT_TOKEN = "8911988561:AAEix6vKY7QFDH5am6TWxIaOTz1dd_T-UiA";
+    const DEFAULT_TG_CHAT_ID = "5545313341";
+
     function loadTelegramInputs() {
-      const token = localStorage.getItem('dornogovi_tg_bot_token') || '';
-      const chatId = localStorage.getItem('dornogovi_tg_chat_id') || '';
+      const token = localStorage.getItem('dornogovi_tg_bot_token') || DEFAULT_TG_BOT_TOKEN;
+      const chatId = localStorage.getItem('dornogovi_tg_chat_id') || DEFAULT_TG_CHAT_ID;
       if (document.getElementById('tgBotTokenInput')) {
         document.getElementById('tgBotTokenInput').value = token;
         document.getElementById('tgChatIdInput').value = chatId;
@@ -1100,8 +1103,8 @@
     }
 
     function updateTgConfigBadge() {
-      const token = localStorage.getItem('dornogovi_tg_bot_token') || '';
-      const chatId = localStorage.getItem('dornogovi_tg_chat_id') || '';
+      const token = localStorage.getItem('dornogovi_tg_bot_token') || DEFAULT_TG_BOT_TOKEN;
+      const chatId = localStorage.getItem('dornogovi_tg_chat_id') || DEFAULT_TG_CHAT_ID;
       const badge = document.getElementById('tgConfigBadge');
       if (!badge) return;
       if (token && chatId) {
@@ -1169,8 +1172,8 @@
     }
 
     async function sendTelegramNotification(record) {
-      const token = localStorage.getItem('dornogovi_tg_bot_token') || '';
-      const chatId = localStorage.getItem('dornogovi_tg_chat_id') || '';
+      const token = localStorage.getItem('dornogovi_tg_bot_token') || DEFAULT_TG_BOT_TOKEN;
+      const chatId = localStorage.getItem('dornogovi_tg_chat_id') || DEFAULT_TG_CHAT_ID;
 
       if (!token || !chatId) return;
 
