@@ -65,13 +65,17 @@
       </div>
 
       <!-- Tab Buttons -->
-      <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 self-stretch md:self-auto justify-center">
+      <div class="flex items-center gap-1.5 sm:gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 self-stretch md:self-auto justify-center flex-wrap">
         <button id="tabUserBtn" onclick="switchTab('user')" 
-          class="px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm">
-          📝 Сорил бөглөх / Миний дүн
+          class="px-3 sm:px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm">
+          📝 Сорил бөглөх
+        </button>
+        <button id="tabPublicBtn" onclick="switchTab('public')" 
+          class="px-3 sm:px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1">
+          📊 Нэгдсэн дүн (Нийтэд ил)
         </button>
         <button id="tabAdminBtn" onclick="openAdminAuth()" 
-          class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1">
+          class="px-3 sm:px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1">
           🔒 Админ хяналт
         </button>
       </div>
@@ -282,6 +286,88 @@
           <button onclick="resetQuiz()" class="px-5 py-2.5 bg-slate-600 hover:bg-slate-700 text-white font-medium text-xs sm:text-sm rounded-xl transition-all">
             🔄 Буцах / Дахин сорил бөглөх
           </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION 3: PUBLIC TEAM RESULTS & ANALYTICS VIEW -->
+    <div id="publicSection" class="hidden space-y-6">
+      
+      <!-- Public Header -->
+      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-amber-500 text-white p-5 sm:p-6 rounded-2xl shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-wide">
+            🌐 НЭГДСЭН ДҮН БА БАГИЙН СЭТГЭЛ ЗҮЙН ТӨЛӨВ (НИЙТЭД ИЛ)
+          </span>
+          <span class="text-xs font-medium opacity-90">🏢 Дорноговь Орон Сууц ТӨҮК</span>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight">
+          Албан хаагчдын чиг баримжааны нэгдсэн дүн
+        </h2>
+        <p class="text-xs sm:text-sm text-blue-100 mt-1 font-medium">
+          Тест бөглөсөн нийт албан хаагчдын үр дүн, харьцуулсан үзүүлэлт болон багийн чиг баримжааны дүн шинжилгээ
+        </p>
+      </div>
+
+      <!-- Stats Summary Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm">
+          <div class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Нийт хамрагдсан</div>
+          <div class="text-2xl font-black text-slate-900 dark:text-slate-100 mt-1" id="pubStatTotal">0</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Албан хаагч баталгаажсан</div>
+        </div>
+        <div class="bg-purple-50/60 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/40 p-4 rounded-xl shadow-sm">
+          <div class="text-xs text-purple-700 dark:text-purple-300 font-bold">1. Өөртөө /Я/</div>
+          <div class="text-2xl font-black text-purple-700 dark:text-purple-300 mt-1" id="pubStatSelf">0</div>
+          <div class="text-[11px] text-purple-600/80 dark:text-purple-400" id="pubStatSelfPct">0%</div>
+        </div>
+        <div class="bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 p-4 rounded-xl shadow-sm">
+          <div class="text-xs text-emerald-700 dark:text-emerald-300 font-bold">2. Харилцаанд /О/</div>
+          <div class="text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1" id="pubStatInteraction">0</div>
+          <div class="text-[11px] text-emerald-600/80 dark:text-emerald-400" id="pubStatInterPct">0%</div>
+        </div>
+        <div class="bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 p-4 rounded-xl shadow-sm">
+          <div class="text-xs text-blue-700 dark:text-blue-300 font-bold">3. Ажил хэрэгт /Д/</div>
+          <div class="text-2xl font-black text-blue-700 dark:text-blue-300 mt-1" id="pubStatTask">0</div>
+          <div class="text-[11px] text-blue-600/80 dark:text-blue-400" id="pubStatTaskPct">0%</div>
+        </div>
+      </div>
+
+      <!-- Public Search & Table Card -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm space-y-4 p-4 sm:p-5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-4">
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              📋 Нийт албан хаагчдын жагсаалт ба Оноо
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Нэр эсвэл албан тушаалаар хайлт хийн дэлгэрэнгүй тайланг харна уу.</p>
+          </div>
+          <div class="w-full sm:w-64">
+            <input type="text" id="publicSearchInput" onkeyup="filterPublicTable()" placeholder="🔍 Нэр, албан тушаалаар хайх..." 
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-[60vh] custom-scrollbar">
+          <table class="w-full text-left text-xs text-slate-800 dark:text-slate-200">
+            <thead class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold uppercase sticky top-0">
+              <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">Албан хаагчийн нэр</th>
+                <th class="p-3">Албан тушаал / Хэлтэс</th>
+                <th class="p-3">Огноо</th>
+                <th class="p-3 text-purple-600">Я (Өөртөө)</th>
+                <th class="p-3 text-emerald-600">О (Харилцаанд)</th>
+                <th class="p-3 text-blue-600">Д (Ажилд)</th>
+                <th class="p-3">Давамгайлсан чиглэл</th>
+                <th class="p-3 text-right">Үйлдэл</th>
+              </tr>
+            </thead>
+            <tbody id="publicTableBody" class="divide-y divide-slate-200 dark:divide-slate-700">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -680,20 +766,34 @@
 
     function switchTab(tab) {
       const userSec = document.getElementById('userSection');
+      const publicSec = document.getElementById('publicSection');
       const adminSec = document.getElementById('adminSection');
+      
       const userBtn = document.getElementById('tabUserBtn');
+      const publicBtn = document.getElementById('tabPublicBtn');
       const adminBtn = document.getElementById('tabAdminBtn');
+
+      const activeClass = "px-3 sm:px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm";
+      const inactiveClass = "px-3 sm:px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1";
+
+      userSec.classList.add('hidden');
+      publicSec.classList.add('hidden');
+      adminSec.classList.add('hidden');
+
+      userBtn.className = inactiveClass;
+      publicBtn.className = inactiveClass;
+      adminBtn.className = inactiveClass;
 
       if (tab === 'user') {
         userSec.classList.remove('hidden');
-        adminSec.classList.add('hidden');
-        userBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm";
-        adminBtn.className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1";
-      } else {
-        userSec.classList.add('hidden');
+        userBtn.className = activeClass;
+      } else if (tab === 'public') {
+        publicSec.classList.remove('hidden');
+        publicBtn.className = activeClass;
+        renderPublicDashboard();
+      } else if (tab === 'admin') {
         adminSec.classList.remove('hidden');
-        adminBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1";
-        userBtn.className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all";
+        adminBtn.className = activeClass;
         renderAdminDashboard();
       }
     }
@@ -927,9 +1027,105 @@
       document.getElementById('registrationCard').classList.remove('hidden');
     }
 
-    // ADMIN FUNCTIONS (PROTECTED BY PIN 1234)
+    // OFFICIAL PRE-LOADED DATASET (12 EMPLOYEES)
+    const initialEmployeesData = [
+      { id: 1726624634000, name: "Төмөртогоо Отгонцэцэг", position: "үйлчлэгч", date: "2026.09.18 09:57:14", selfScore: 4, interactionScore: 8, taskScore: 15, selfPct: 15, interPct: 30, taskPct: 56, dominant: "Ажил хэрэгт чиглэсэн /Д/", dominantKey: "task" },
+      { id: 1726625080000, name: "Төмөртогоо Мөнхжаргал", position: "Үйлчлэгч", date: "2026.09.18 10:04:40", selfScore: 5, interactionScore: 9, taskScore: 13, selfPct: 19, interPct: 33, taskPct: 48, dominant: "Ажил хэрэгт чиглэсэн /Д/", dominantKey: "task" },
+      { id: 1726626856000, name: "Мөнхбат Нямсүрэн", position: "Худалдан авах ажиллагааны мэргэжилтэн", date: "2026.09.18 10:34:16", selfScore: 7, interactionScore: 10, taskScore: 10, selfPct: 26, interPct: 37, taskPct: 37, dominant: "Харилцаанд хандсан /О/", dominantKey: "interaction" },
+      { id: 1726627097000, name: "нэргүй Ариунмонгол", position: "Менежер", date: "2026.09.18 10:38:17", selfScore: 5, interactionScore: 13, taskScore: 9, selfPct: 19, interPct: 48, taskPct: 33, dominant: "Харилцаанд хандсан /О/", dominantKey: "interaction" },
+      { id: 1726627549000, name: "Саранчимэг Сүнжидмаа", position: "үйлчлэгч", date: "2026.09.18 10:45:49", selfScore: 4, interactionScore: 11, taskScore: 12, selfPct: 15, interPct: 41, taskPct: 44, dominant: "Ажил хэрэгт чиглэсэн /Д/", dominantKey: "task" },
+      { id: 1726627790000, name: "Дашхутаг Давааня", position: "Үйлчэлгч", date: "2026.09.18 10:49:50", selfScore: 8, interactionScore: 7, taskScore: 12, selfPct: 30, interPct: 26, taskPct: 44, dominant: "Ажил хэрэгт чиглэсэн /Д/", dominantKey: "task" },
+      { id: 1726633305000, name: "Б.Орхонсэлэнгэ", position: "нярав", date: "2026.09.18 12:21:45", selfScore: 9, interactionScore: 9, taskScore: 9, selfPct: 33, interPct: 33, taskPct: 33, dominant: "Өөртөө хандсан /Я/", dominantKey: "self" },
+      { id: 1726635427000, name: "Алтанцэцэг Тэгшдүүрэн", position: "Үйлчлэгч", date: "2026.09.18 12:57:07", selfScore: 6, interactionScore: 11, taskScore: 10, selfPct: 22, interPct: 41, taskPct: 37, dominant: "Харилцаанд хандсан /О/", dominantKey: "interaction" },
+      { id: 1726650629000, name: "Нацаг Энхцэцэг", position: "Захирал", date: "2026.09.18 17:10:29", selfScore: 1, interactionScore: 12, taskScore: 14, selfPct: 4, interPct: 44, taskPct: 52, dominant: "Ажил хэрэгт чиглэсэн /Д/", dominantKey: "task" },
+      { id: 1726651020000, name: "Наранцэцэг Баярхүү", position: "Үйлчлэгч", date: "2026.09.18 17:17:00", selfScore: 6, interactionScore: 12, taskScore: 9, selfPct: 22, interPct: 44, taskPct: 33, dominant: "Харилцаанд хандсан /О/", dominantKey: "interaction" },
+      { id: 1726652011000, name: "Сүхээ Бирваа", position: "Жолооч", date: "2026.09.18 17:33:31", selfScore: 9, interactionScore: 9, taskScore: 9, selfPct: 33, interPct: 33, taskPct: 33, dominant: "Өөртөө хандсан /Я/", dominantKey: "self" },
+      { id: 1726660199000, name: "Түвшинтөгс Соёл-Ундраа", position: "Ерөнхий нягтлан бодогч", date: "2026.09.18 19:49:59", selfScore: 6, interactionScore: 13, taskScore: 8, selfPct: 22, interPct: 48, taskPct: 30, dominant: "Харилцаанд хандсан /О/", dominantKey: "interaction" }
+    ];
+
     function getStoredRecords() {
-      return JSON.parse(localStorage.getItem('dornogovi_quiz_records') || '[]');
+      const storedStr = localStorage.getItem('dornogovi_quiz_records');
+      if (!storedStr) {
+        localStorage.setItem('dornogovi_quiz_records', JSON.stringify(initialEmployeesData));
+        return initialEmployeesData;
+      }
+      let records = JSON.parse(storedStr);
+      if (records.length === 0) {
+        records = initialEmployeesData;
+        localStorage.setItem('dornogovi_quiz_records', JSON.stringify(records));
+      }
+      return records;
+    }
+
+    // PUBLIC DASHBOARD RENDERING LOGIC
+    function renderPublicDashboard() {
+      const records = getStoredRecords();
+      document.getElementById('pubStatTotal').innerText = records.length;
+
+      let selfCount = 0, interCount = 0, taskCount = 0;
+      records.forEach(r => {
+        if (r.dominantKey === 'self') selfCount++;
+        if (r.dominantKey === 'interaction') interCount++;
+        if (r.dominantKey === 'task') taskCount++;
+      });
+
+      const total = records.length || 1;
+      document.getElementById('pubStatSelf').innerText = selfCount;
+      document.getElementById('pubStatSelfPct').innerText = `${Math.round((selfCount / total) * 100)}%`;
+
+      document.getElementById('pubStatInteraction').innerText = interCount;
+      document.getElementById('pubStatInterPct').innerText = `${Math.round((interCount / total) * 100)}%`;
+
+      document.getElementById('pubStatTask').innerText = taskCount;
+      document.getElementById('pubStatTaskPct').innerText = `${Math.round((taskCount / total) * 100)}%`;
+
+      renderPublicTableRows(records);
+    }
+
+    function renderPublicTableRows(records) {
+      const tbody = document.getElementById('publicTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-6 text-slate-500 dark:text-slate-400">Мэдээлэл одоогоор байхгүй байна.</td></tr>`;
+        return;
+      }
+
+      records.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900 transition-all border-b border-slate-100 dark:border-slate-800";
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-slate-400">${idx + 1}</td>
+          <td class="p-3 font-bold text-slate-900 dark:text-slate-100">${r.name}</td>
+          <td class="p-3 text-slate-600 dark:text-slate-300 font-medium">${r.position}</td>
+          <td class="p-3 text-slate-500 dark:text-slate-400 text-xs">${r.date}</td>
+          <td class="p-3 font-bold text-purple-600">${r.selfScore}</td>
+          <td class="p-3 font-bold text-emerald-600">${r.interactionScore}</td>
+          <td class="p-3 font-bold text-blue-600">${r.taskScore}</td>
+          <td class="p-3">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
+              r.dominantKey === 'self' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800' :
+              r.dominantKey === 'interaction' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' :
+              'bg-blue-100 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+            }">${r.dominant}</span>
+          </td>
+          <td class="p-3 text-right">
+            <button onclick="viewDetail(${r.id})" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-sm transition-all">👁️ Тайлан харах</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterPublicTable() {
+      const query = document.getElementById('publicSearchInput').value.toLowerCase().trim();
+      const records = getStoredRecords();
+      const filtered = records.filter(r => 
+        r.name.toLowerCase().includes(query) || 
+        r.position.toLowerCase().includes(query)
+      );
+      renderPublicTableRows(filtered);
     }
 
     function renderAdminDashboard() {
@@ -1205,6 +1401,11 @@
         console.error('Telegram API Error:', e);
       }
     }
+
+    // Auto load public results on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      switchTab('public');
+    });
   </script>
 </body>
 </html>
