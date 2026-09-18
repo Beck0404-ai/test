@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Дорноговь Орон Сууц - Албан хаагчдын чиг баримжааны сорил & Админ систем</title>
+  <title>Дорноговь Орон Сууц - Албан хаагчдын чиг баримжааны сорил & Нууцлалтай Админ систем</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     .custom-scrollbar::-webkit-scrollbar {
@@ -24,10 +24,10 @@
       body * {
         visibility: hidden;
       }
-      #printModalArea, #printModalArea * {
+      #printableArea, #printableArea *, #printModalArea, #printModalArea * {
         visibility: visible;
       }
-      #printModalArea {
+      #printableArea, #printModalArea {
         position: absolute;
         left: 0;
         top: 0;
@@ -52,12 +52,15 @@
           <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
             🏢 Дорноговь Орон Сууц
           </span>
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            🔒 Хувийн нууцлал хамгаалагдсан
+          </span>
         </div>
         <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
           Албан хаагчдын чиг баримжаа тодорхойлох сорил
         </h1>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
-          В.Смекал, М.Кучерагийн сорил (27 асуулт) - Админ хяналтын систем
+          В.Смекал, М.Кучерагийн сорил (27 асуулт) & Нууцлалтай тестийн систем
         </p>
       </div>
 
@@ -65,16 +68,16 @@
       <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 self-stretch md:self-auto justify-center">
         <button id="tabUserBtn" onclick="switchTab('user')" 
           class="px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm">
-          📝 Сорил бөглөх
+          📝 Сорил бөглөх / Миний дүн
         </button>
-        <button id="tabAdminBtn" onclick="switchTab('admin')" 
-          class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all">
-          👑 Админ хяналт (Дүн харах)
+        <button id="tabAdminBtn" onclick="openAdminAuth()" 
+          class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1">
+          🔒 Админ хяналт
         </button>
       </div>
     </div>
 
-    <!-- SECTION 1: EMPLOYEE QUIZ FORM (NO RESULTS SHOWN TO EMPLOYEE) -->
+    <!-- SECTION 1: EMPLOYEE QUIZ FORM & PRIVATE RESULT -->
     <div id="userSection" class="space-y-6">
       
       <!-- Step 1: Registration Form -->
@@ -84,7 +87,7 @@
             👤 Албан хаагчийн мэдээлэл баталгаажуулах
           </h3>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Сорил эхлүүлэхийн өмнө өөрийн овог, нэр болон хэлтэс, албан тушаалаа бүртгүүлнэ үү. Хариулт баталгаажсаны дараа дүнг Админд шууд хүргэх болно.
+            Сорил эхлүүлэхийн өмнө өөрийн овог, нэр болон хэлтэс, албан тушаалаа бүртгүүлнэ үү. Бөглөж дуусаад өөрийн дүнг шууд харах болно (Таны дүнг бусад хүмүүс харахгүй).
           </p>
         </div>
 
@@ -136,44 +139,193 @@
           <div class="text-xs text-slate-500 dark:text-slate-400">
             💡 Асуулт бүрээс өөрт хамгийн ойр 1 сонголтыг сонгож бөглөнө үү.
           </div>
-          <button id="submitBtn" onclick="submitToAdmin()" disabled
+          <button id="submitBtn" onclick="calculateResults()" disabled
             class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl shadow-md transition-all">
-            Хариулт баталгаажуулах & Админд илгээх
+            Хариулт баталгаажуулах & Миний дүнг харах
           </button>
         </div>
       </div>
 
-      <!-- Step 3: CONFIRMATION SCREEN FOR EMPLOYEE (NO SCORE DISCLOSED) -->
-      <div id="submittedScreen" class="hidden space-y-6 animate-fadeIn text-center py-10">
-        <div class="inline-flex p-4 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 rounded-full text-5xl mb-2 shadow-inner">
-          ✅
+      <!-- Step 3: INDIVIDUAL PRIVATE RESULT SCREEN (SHOWN ONLY TO THE COMPLETED EMPLOYEE) -->
+      <div id="resultScreen" class="hidden space-y-6 animate-fadeIn">
+        <div id="printableArea" class="space-y-6">
+          
+          <!-- Banner for Employee -->
+          <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-amber-500 text-white p-6 rounded-2xl shadow-md">
+            <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+              <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-wide">
+                🎉 ТАНИЙ ХУВИЙН БАТАЛГААЖСАН СЭТГЭЛ ЗҮЙН ДҮГНЭЛТ
+              </span>
+              <span class="text-xs font-medium opacity-90" id="resultDate"></span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight" id="empGreetingName">
+              Албан хаагчийн тестийн нэгдсэн үр дүн
+            </h2>
+            <p id="resultUserInfo" class="text-xs sm:text-sm text-blue-100 mt-1 font-medium"></p>
+          </div>
+
+          <!-- Score Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Self (Я) -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-purple-600 dark:text-purple-400">1. Өөртөө хандсан /Я/</span>
+                <span class="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 px-2 py-0.5 rounded font-mono font-bold" id="pctSelf">0%</span>
+              </div>
+              <div class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-2" id="scoreSelf">0 / 27</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">ӨРСӨЛДӨХ СОНИРХОЛ, ЭРХ МЭДЭЛ, БАЙР СУУРЬ, УРАМШУУЛАЛ</div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
+                <div id="barSelf" class="bg-purple-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Interaction (О) -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">2. Харилцаанд хандсан /О/</span>
+                <span class="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 px-2 py-0.5 rounded font-mono font-bold" id="pctInteraction">0%</span>
+              </div>
+              <div class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-2" id="scoreInteraction">0 / 27</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">ХҮМҮҮСТЭЙ ХАРИЛЦАХ, ДОТНОСОХ, БҮЛГЭЭС ХАМААРАХ</div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
+                <div id="barInteraction" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Task (Д) -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-blue-600 dark:text-blue-400">3. Ажил хэрэгт чиглэсэн /Д/</span>
+                <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 px-2 py-0.5 rounded font-mono font-bold" id="pctTask">0%</span>
+              </div>
+              <div class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-2" id="scoreTask">0 / 27</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">АЖЛЫГ ИЛҮҮ САЙН ГҮЙЦЭТГЭХ, АСУУДАЛ ШИЙДВЭРЛЭХ</div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
+                <div id="barTask" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Dominant Detailed Analysis Box -->
+          <div class="bg-white dark:bg-slate-800 border-2 border-blue-500/40 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 flex items-center gap-2" id="dominantTitle">
+              🎯 Таны давамгайлах чиг баримжаа
+            </h3>
+            <div id="dominantDesc" class="text-sm sm:text-base text-slate-800 dark:text-slate-200 space-y-4 leading-relaxed">
+              <!-- Dynamic detailed analysis text -->
+            </div>
+          </div>
+
+          <!-- Deep Detailed Psychological Breakdown & Recommendations for all 3 Dimensions -->
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 space-y-6">
+            <h4 class="text-base font-bold text-slate-900 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3">
+              📖 3 Үндсэн чиг баримжааны гүнзгий нарийвчилсан дүгнэлт ба зөвлөмж:
+            </h4>
+
+            <!-- 1. Self Orientation Detailed -->
+            <div class="space-y-2 p-4 rounded-xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/40">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-purple-950 dark:text-purple-300 text-sm sm:text-base">1. Өөртөө хандсан чиг баримжаа /Я/</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-200 rounded">Я - Себя</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-semibold">
+                Түлхүүр дүгнэлт: Түгшүүр, цухалдуу зан, өрсөлдөх сонирхол, эрх мэдэл, байр суурь олж авахыг эрмэлзэх, урамшуулал шагналд дуртай.
+              </p>
+              <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1.5 pt-1">
+                <p><strong>• Сэтгэл зүйн гүнзгий онцлог:</strong> Хувийн амжилт, нийгэм болон байгууллагад эзлэх нэр хүнд, карьерын өсөлтөд өндөр ач холбогдол өгдөг. Хувийн чадавхи, авъяасаа таниулах, бусдаас илүү гарч хүлээн зөвшөөрөгдөх дотоод эрмэлзэл хүчтэй.</p>
+                <p><strong>• Ажиллах хэв маяг ба Сэтгэл хөдлөл:</strong> Шүүмжлэл болон бүтэлгүйтлийг хүндээр тусгаж авдаг тул заримдаа стресс, түгшүүрт өртөх хандлагатай. Урамшуулал, сайшаал, хариуцлагатай бие даасан даалгаварт хамгийн өндөр бүтээмжийг үзүүлдэг.</p>
+                <p><strong>• Хөгжлийн зөвлөмж:</strong> Хувийн амжилтыг багийн нийт зорилго, хамт олны хөгжилд өөрийн хувь нэмрийг оруулахад анхаарлаа хандуулах, бусдын санаа бодлыг нээлттэй сонсож сурах.</p>
+              </div>
+            </div>
+
+            <!-- 2. Interaction Orientation Detailed -->
+            <div class="space-y-2 p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-emerald-950 dark:text-emerald-300 text-sm sm:text-base">2. Харилцаанд хандсан чиг баримжаа /О/</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200 rounded">О - Общение</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-semibold">
+                Түлхүүр дүгнэлт: Ямар ч нөхцөлд хүмүүстэй харилцаа тогтоох, хамтран ажиллах сонирхолтой ч ихэнх тохиолдолд хүмүүст чин сэтгэлээсээ тусламж үзүүлэх эсвэл ганцаараа тодорхой даалгавар биелүүлэх чадвар сул, бүлгээс хамааралтай, хүмүүстэй дотносох хэрэгцээтэй.
+              </p>
+              <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1.5 pt-1">
+                <p><strong>• Сэтгэл зүйн гүнзгий онцлог:</strong> Бусадтай сайн харилцах, дотно нөхөрлөл тогтоох, хамт олны халуун дулаан уур амьсгалыг хамгийн дээдэд тавьдаг. Ажлын эцсийн үр дүнгээс илүү хамтран ажиллаж буй хүмүүсийн харилцааг чухалчилдаг.</p>
+                <p><strong>• Ажиллах хэв маяг ба Сэтгэл хөдлөл:</strong> Бүлгээс хамаарах хэрэгцээ өндөр тул ганцаараа бие даан шийдвэр гаргах, ганцаарчилсан хариуцлагатай даалгавар биелүүлэхэд сэтгэл зүйн дарамт мэдэрч болзошгүй. Олон нийтийн харилцаа, маргаан зохицуулах ажилд маш сайн.</p>
+                <p><strong>• Хөгжлийн зөвлөмж:</strong> Харилцааны таатай байдлаас гадна ажлын гүйцэтгэлийн үр дүнд төвлөрөх, бие даан даалгаврыг чанартай дуусгах дадал эзэмших, шаардлагатай үед зарчимч шаардлага тавьж сурах.</p>
+              </div>
+            </div>
+
+            <!-- 3. Task Orientation Detailed -->
+            <div class="space-y-2 p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-blue-950 dark:text-blue-300 text-sm sm:text-base">3. Ажил хэрэгт чиглэсэн чиг баримжаа /Д/</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-200 rounded">Д - Дело</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-semibold">
+                Түлхүүр дүгнэлт: Энэ нь өөрийн үзэл санааг ажлын сонирхолд нийцүүлэн, ажлыг илүү сайн гүйцэтгэх, ажил хэргийн асуудлыг шийдвэрлэх явдал.
+              </p>
+              <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1.5 pt-1">
+                <p><strong>• Сэтгэл зүйн гүнзгий онцлог:</strong> Асуудлыг шийдвэрлэх, шинэ мэдлэг эзэмших, ажлыг чанартай гүйцэтгэхэд хамгийн их сонирхолтой. Ажлын явц болон чанартай үр дүн танд хамгийн дээд сэтгэл ханамжийг өгдөг.</p>
+                <p><strong>• Ажиллах хэв маяг ба Сэтгэл хөдлөл:</strong> Төлөвлөгөөтэй, зарчимч, системтэй, логик сэтгэлгээтэй, асуудалд хараат бус бодитой ханддаг. Заримдаа ажилдаа хэт улайрснаас болж хамтран ажиллагсдынхаа сэтгэл зүйн хэрэгцээг анзаарахгүй өнгөрөх талтай.</p>
+                <p><strong>• Хөгжлийн зөвлөмж:</strong> Ажлын үр дүнгээс гадна хамтран ажиллагсдынхаа сэтгэл зүй, харилцаанд анхаарах, мэдлэг туршлагаа бусадтайгаа зөв арга барилаар хуваалцах, ажил ба амралтын балансыг тохируулах.</p>
+              </div>
+            </div>
+
+          </div>
+
         </div>
-        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Сорил амжилттай илгээгдлээ!</h2>
-        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto leading-relaxed">
-          Баярлалаа, <strong id="submittedEmpName" class="text-slate-900 dark:text-slate-100"></strong>! Таны 27 асуултын хариулт баталгаажиж, байгууллагын <strong>Админ / Хүний нөөцийн хэлтэст</strong> амжилттай хүргэгдлээ.
-        </p>
-        <div class="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl max-w-md mx-auto text-xs text-slate-500 dark:text-slate-400">
-          🔒 Тестийн дүн болон сэтгэл зүйн нарийвчилсан тайлан зөвхөн байгууллагын Удирдах ажилтан / Админ хэсэгт бүртгэгддэг.
-        </div>
-        <div class="pt-4">
-          <button onclick="resetQuiz()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all">
-            🔄 Буцах / Шинэ сорил бөглөх
+
+        <!-- Result Action Bar -->
+        <div class="pt-3 flex justify-between items-center flex-wrap gap-3">
+          <button onclick="window.print()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2">
+            🖨️ Миний тайланг хэвлэх / PDF хадгалах
+          </button>
+          <button onclick="resetQuiz()" class="px-5 py-2.5 bg-slate-600 hover:bg-slate-700 text-white font-medium text-xs sm:text-sm rounded-xl transition-all">
+            🔄 Буцах / Дахин сорил бөглөх
           </button>
         </div>
       </div>
 
     </div>
 
-    <!-- SECTION 2: ADMIN DASHBOARD VIEW (ONLY ADMIN CAN SEE RESULTS & DETAILS) -->
+    <!-- ADMIN AUTHENTICATION MODAL -->
+    <div id="adminAuthModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+        <div class="text-center space-y-1">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300 rounded-full flex items-center justify-center mx-auto text-2xl mb-2">
+            🔑
+          </div>
+          <h3 class="font-extrabold text-base text-slate-900 dark:text-slate-100">Админ нэвтрэх хэсэг</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Удирдах ажилтны нууц кодоо оруулна уу.</p>
+        </div>
+
+        <div>
+          <input type="password" id="adminPinInput" placeholder="Админ нууц код (Анхны код: 1234)" 
+            onkeydown="if(event.key==='Enter') verifyAdminPin()"
+            class="w-full text-center px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-mono tracking-widest focus:outline-none focus:border-blue-500">
+          <p id="adminAuthError" class="text-xs text-red-500 mt-1.5 font-semibold text-center hidden">❌ Нууц код буруу байна!</p>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="closeAdminAuth()" class="w-1/2 py-2.5 bg-slate-500 hover:bg-slate-600 text-white text-xs font-bold rounded-xl transition-all">
+            Цуцлах
+          </button>
+          <button onclick="verifyAdminPin()" class="w-1/2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all">
+            Нэвтрэх ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: ADMIN DASHBOARD VIEW (PASSWORD PROTECTED) -->
     <div id="adminSection" class="hidden space-y-6">
       
       <!-- Admin Header & Actions -->
       <div class="flex items-center justify-between flex-wrap gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
         <div>
           <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            👑 Дорноговь Орон Сууц - Админ Панел
+            👑 Дорноговь Орон Сууц - Нэгдсэн Админ Панел
           </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Албан хаагчдын бөглөсөн хариулт, оноо ба сэтгэл зүйн нарийвчилсан тайлангийн сан</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Бүх албан хаагчдын бөглөсөн хариулт, оноо ба сэтгэл зүйн нарийвчилсан тайлангийн сан</p>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
@@ -482,6 +634,8 @@
 
     let currentEmployee = { name: '', position: '' };
     const userAnswers = {};
+    let isAdminAuthenticated = false;
+    const ADMIN_PIN = "1234";
 
     function switchTab(tab) {
       const userSec = document.getElementById('userSection');
@@ -493,13 +647,39 @@
         userSec.classList.remove('hidden');
         adminSec.classList.add('hidden');
         userBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm";
-        adminBtn.className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all";
+        adminBtn.className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all flex items-center gap-1";
       } else {
         userSec.classList.add('hidden');
         adminSec.classList.remove('hidden');
-        adminBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm";
+        adminBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1";
         userBtn.className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg transition-all";
         renderAdminDashboard();
+      }
+    }
+
+    function openAdminAuth() {
+      if (isAdminAuthenticated) {
+        switchTab('admin');
+      } else {
+        document.getElementById('adminAuthModal').classList.remove('hidden');
+        document.getElementById('adminPinInput').focus();
+      }
+    }
+
+    function closeAdminAuth() {
+      document.getElementById('adminAuthModal').classList.add('hidden');
+      document.getElementById('adminAuthError').classList.add('hidden');
+      document.getElementById('adminPinInput').value = '';
+    }
+
+    function verifyAdminPin() {
+      const pin = document.getElementById('adminPinInput').value.trim();
+      if (pin === ADMIN_PIN) {
+        isAdminAuthenticated = true;
+        closeAdminAuth();
+        switchTab('admin');
+      } else {
+        document.getElementById('adminAuthError').classList.remove('hidden');
       }
     }
 
@@ -583,8 +763,7 @@
       }
     }
 
-    // SUBMIT ANSWERS DIRECTLY TO ADMIN (NO SCORE SHOWN TO EMPLOYEE)
-    function submitToAdmin() {
+    function calculateResults() {
       let selfScore = 0;
       let interactionScore = 0;
       let taskScore = 0;
@@ -611,7 +790,7 @@
 
       const recordDate = new Date().toLocaleString('mn-MN');
 
-      // Save to localStorage
+      // Save to localStorage (Admin can view with PIN 1234)
       const record = {
         id: Date.now(),
         name: currentEmployee.name,
@@ -632,22 +811,79 @@
       existing.push(record);
       localStorage.setItem('dornogovi_quiz_records', JSON.stringify(existing));
 
-      // Show simple thank-you confirmation to employee
-      document.getElementById('submittedEmpName').innerText = currentEmployee.name;
+      // Display private results UI directly to the completing employee
+      document.getElementById('empGreetingName').innerText = `${currentEmployee.name} - Таны тестийн үр дүн`;
+      document.getElementById('resultUserInfo').innerText = `Албан тушаал / Хэлтэс: ${currentEmployee.position}`;
+      document.getElementById('resultDate').innerText = `Огноо: ${recordDate}`;
+
+      document.getElementById('scoreSelf').innerText = `${selfScore} / 27`;
+      document.getElementById('scoreInteraction').innerText = `${interactionScore} / 27`;
+      document.getElementById('scoreTask').innerText = `${taskScore} / 27`;
+
+      document.getElementById('pctSelf').innerText = `${selfPct}%`;
+      document.getElementById('pctInteraction').innerText = `${interPct}%`;
+      document.getElementById('pctTask').innerText = `${taskPct}%`;
+
+      document.getElementById('barSelf').style.width = `${(selfScore / 27) * 100}%`;
+      document.getElementById('barInteraction').style.width = `${(interactionScore / 27) * 100}%`;
+      document.getElementById('barTask').style.width = `${(taskScore / 27) * 100}%`;
+
+      let desc = '';
+      if (top.key === 'self') {
+        desc = `
+          <div class="space-y-3">
+            <p class="font-bold text-purple-700 dark:text-purple-300 text-base">🟣 Өөртөө хандсан чиг баримжаа /Я/ давамгайлж байна:</p>
+            <p class="font-semibold text-purple-900 dark:text-purple-200">Түлхүүр дүгнэлт: Түгшүүр, цухалдуу зан, өрсөлдөх сонирхол, эрх мэдэл, байр суурь олж авахыг эрмэлзэх, урамшуулал шагналд дуртай.</p>
+            <div class="bg-purple-50 dark:bg-purple-950/40 p-3.5 rounded-xl border border-purple-200 dark:border-purple-800 text-xs sm:text-sm space-y-2 text-slate-800 dark:text-slate-200">
+              <p><strong>1. Дэлгэрэнгүй тодорхойлолт:</strong> Та өөрийн амжилт, нийгэм болон байгууллагад эзлэх нэр хүнд, карьерын өсөлтөд өндөр ач холбогдол өгдөг. Хувийн чадавхи, авъяасаа таниулах, бусдаас илүү гарч хүлээн зөвшөөрөгдөх дотоод эрмэлзэл хүчтэй.</p>
+              <p><strong>2. Ажиллах хэв маяг & Сэтгэл хөдлөл:</strong> Шүүмжлэл эсвэл бүтэлгүйтлийг хүндээр тусгаж авдаг тул заримдаа стресс, түгшүүрт өртөх хандлагатай. Урамшуулал, сайшаал, хариуцлагатай бие даасан даалгаварт хамгийн өндөр бүтээмжийг үзүүлдэг.</p>
+              <p><strong>3. Мэргэжлийн хөгжлийн зөвлөмж:</strong> Хувийн амжилтыг багийн нийт зорилго, хамт олны хөгжилд өөрийн хувь нэмрийг оруулахад анхаарлаа хандуулах, бусдын санаа бодлыг нээлттэй сонсож сурах.</p>
+            </div>
+          </div>
+        `;
+      } else if (top.key === 'interaction') {
+        desc = `
+          <div class="space-y-3">
+            <p class="font-bold text-emerald-700 dark:text-emerald-300 text-base">🟢 Харилцаанд хандсан чиг баримжаа /О/ давамгайлж байна:</p>
+            <p class="font-semibold text-emerald-900 dark:text-emerald-200">Түлхүүр дүгнэлт: Ямар ч нөхцөлд хүмүүстэй харилцаа тогтоох, хамтран ажиллах сонирхолтой ч ихэнх тохиолдолд хүмүүст чин сэтгэлээсээ тусламж үзүүлэх эсвэл ганцаараа тодорхой даалгавар биелүүлэх чадвар сул, бүлгээс хамааралтай, хүмүүстэй дотносох хэрэгцээтэй.</p>
+            <div class="bg-emerald-50 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800 text-xs sm:text-sm space-y-2 text-slate-800 dark:text-slate-200">
+              <p><strong>1. Дэлгэрэнгүй тодорхойлолт:</strong> Та бусад хүмүүстэй таатай харилцах, дотно нөхөрлөл тогтоох, хамт олны халуун дулаан уур амьсгалыг хамгийн дээдэд тавьдаг. Ажлын эцсийн үр дүнгээс илүү хамтран ажиллаж буй хүмүүсийн харилцааг чухалчилдаг.</p>
+              <p><strong>2. Ажиллах хэв маяг & Сэтгэл хөдлөл:</strong> Бүлгээс хамаарах хэрэгцээ өндөр тул ганцаараа бие даан шийдвэр гаргах, ганцаарчилсан хариуцлагатай даалгавар биелүүлэхэд сэтгэл зүйн дарамт мэдэрч болзошгүй. Олон нийтийн харилцаа, маргаан зохицуулах ажилд маш сайн.</p>
+              <p><strong>3. Мэргэжлийн хөгжлийн зөвлөмж:</strong> Харилцааны таатай байдлаас гадна ажлын гүйцэтгэлийн үр дүнд төвлөрөх, бие даан даалгаврыг чанартай дуусгах дадал эзэмших, шаардлагатай үед зарчимч шаардлага тавьж сурах.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        desc = `
+          <div class="space-y-3">
+            <p class="font-bold text-blue-700 dark:text-blue-300 text-base">🔵 Ажил хэрэгт чиглэсэн чиг баримжаа /Д/ давамгайлж байна:</p>
+            <p class="font-semibold text-blue-900 dark:text-blue-200">Түлхүүр дүгнэлт: Өөрийн үзэл санааг ажлын сонирхолд нийцүүлэн, ажлыг илүү сайн гүйцэтгэх, ажил хэргийн асуудлыг шийдвэрлэх явдал.</p>
+            <div class="bg-blue-50 dark:bg-blue-950/40 p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 text-xs sm:text-sm space-y-2 text-slate-800 dark:text-slate-200">
+              <p><strong>1. Дэлгэрэнгүй тодорхойлолт:</strong> Та асуудлыг шийдвэрлэх, шинэ мэдлэг эзэмших, ажлыг чанартай гүйцэтгэхэд хамгийн их сонирхолтой. Ажлын явц болон чанартай үр дүн танд хамгийн дээд сэтгэл ханамжийг өгдөг.</p>
+              <p><strong>2. Ажиллах хэв маяг & Сэтгэл хөдлөл:</strong> Төлөвлөгөөтэй, зарчимч, системтэй, логик сэтгэлгээтэй, асуудалд хараат бус бодитой ханддаг. Заримдаа ажилдаа хэт улайрснаас болж хамтран ажиллагсдынхаа сэтгэл зүйн хэрэгцээг анзаарахгүй өнгөрөх талтай.</p>
+              <p><strong>3. Мэргэжлийн хөгжлийн зөвлөмж:</strong> Ажлын үр дүнгээс гадна хамтран ажиллагсдынхаа сэтгэл зүй, харилцаанд анхаарах, мэдлэг туршлагаа бусадтайгаа зөв арга барилаар хуваалцах, ажил ба амралтын балансыг тохируулах.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('dominantTitle').innerHTML = `🎯 Таны давамгайлах чиг баримжаа: ${top.label} (${top.score} оноо - ${top.pct}%)`;
+      document.getElementById('dominantDesc').innerHTML = desc;
+
       document.getElementById('quizScreen').classList.add('hidden');
-      document.getElementById('submittedScreen').classList.remove('hidden');
+      document.getElementById('resultScreen').classList.remove('hidden');
     }
 
     function resetQuiz() {
       for (let key in userAnswers) delete userAnswers[key];
       document.getElementById('empName').value = '';
       document.getElementById('empPosition').value = '';
-      document.getElementById('submittedScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.add('hidden');
       document.getElementById('quizScreen').classList.add('hidden');
       document.getElementById('registrationCard').classList.remove('hidden');
     }
 
-    // ADMIN FUNCTIONS - ONLY ADMIN CAN VIEW FULL SCORES & DETAILED REPORTS
+    // ADMIN FUNCTIONS (PROTECTED BY PIN 1234)
     function getStoredRecords() {
       return JSON.parse(localStorage.getItem('dornogovi_quiz_records') || '[]');
     }
